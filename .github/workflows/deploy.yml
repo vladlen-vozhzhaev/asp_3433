@@ -25,37 +25,32 @@ jobs:
         run: dotnet publish -c Release -r linux-x64 --self-contained false -o ./publish
 
       - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
-
-      - name: Debug key fingerprint
         shell: bash
         run: |
-          echo "${{ secrets.SSH_KEY }}" > /tmp/check_key
-          chmod 600 /tmp/check_key
-          ssh-keygen -lf /tmp/check_key || echo "INVALID KEY IN SECRET"
-          head -1 /tmp/check_key
-          tail -1 /tmp/check_key
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
 
-      - name: Deploy to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          source: "publish/*"
-          target: ${{ secrets.DEPLOY_PATH }}
-          strip_components: 1
-          overwrite: true
-          debug: true
+          printf '%s\n' "${{ secrets.SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
 
+          ssh-keygen -lf ~/.ssh/deploy_key
+
+          ssh-keyscan -p "${{ secrets.SSH_PORT }}" -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Deploy with rsync
+        shell: bash
+        run: |
+          rsync -avz --delete \
+            -e "ssh -p ${{ secrets.SSH_PORT }} -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new" \
+            ./publish/ \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/"
 
       - name: Restart service
+        shell: bash
         run: |
-          ssh -p ${{ secrets.SSH_PORT }} -i ~/.ssh/id_ed25519 \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            "sudo systemctl restart webapp"
+          ssh -p "${{ secrets.SSH_PORT }}" \
+              -i ~/.ssh/deploy_key \
+              -o IdentitiesOnly=yes \
+              -o StrictHostKeyChecking=accept-new \
+              "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+              "sudo systemctl restart webapp"
