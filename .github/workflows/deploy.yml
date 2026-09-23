@@ -9,35 +9,35 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
   
-  steps:
-    - name: Checkout
-      uses: actions/checkout
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet
-      with:
-        dotnet-version: '8.0.x'
+    steps:
+      - name: Checkout
+        uses: actions/checkout
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet
+        with:
+          dotnet-version: '8.0.x'
+          
+      - name: Restore
+        run: dotnet restore
         
-    - name: Restore
-      run: dotnet restore
-      
-    - name: Publish
-      run: dotnet publish -c Release -r linux-x64 --self-contained false -o ./publish
-      
-    - name: Setup SSH
+      - name: Publish
+        run: dotnet publish -c Release -r linux-x64 --self-contained false -o ./publish
+        
+      - name: Setup SSH
+        run: |
+          echo "${{secrets.SSH_KEY}}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p ${{secrets.SSH_PORT}} -H ${{secrets.SSH_HOST}} >> ~/.ssh/known_hosts 2>/dev/null
+        
+      - name: Deploy
       run: |
-        echo "${{secrets.SSH_KEY}}" > ~/.ssh/id_ed25519
-        chmod 600 ~/.ssh/id_ed25519
-        ssh-keyscan -p ${{secrets.SSH_PORT}} -H ${{secrets.SSH_HOST}} >> ~/.ssh/known_hosts 2>/dev/null
+        rsync -avz --delete \
+          -e "ssh -p ${{secrets.SSH_PORT}} -i ~/.ssh/id_ed25519" \
+          ./publish/ ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}:/srv/webapp/
       
-    - name: Deploy
-    run: |
-      rsync -avz --delete \
-        -e "ssh -p ${{secrets.SSH_PORT}} -i ~/.ssh/id_ed25519" \
-        ./publish/ ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}:/srv/webapp/
-    
-    - name: Restart sevice
-      run: |
-        ssh -p -p ${{secrets.SSH_PORT}} -i ~/.ssh/id_ed25519 \
-        ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}} \
-        "sudo systemctl restart webapp"
+      - name: Restart sevice
+        run: |
+          ssh -p -p ${{secrets.SSH_PORT}} -i ~/.ssh/id_ed25519 \
+          ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}} \
+          "sudo systemctl restart webapp"
