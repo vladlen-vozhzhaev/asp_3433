@@ -31,6 +31,19 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -p ${{secrets.SSH_PORT}} -H ${{secrets.SSH_HOST}} >> ~/.ssh/known_hosts 2>/dev/null
         
+      - name: Debug SSH key
+        run: |
+          wc -c ~/.ssh/id_ed25519
+          head -n 1 ~/.ssh/id_ed25519
+          tail -n 1 ~/.ssh/id_ed25519
+          wc -l ~/.ssh/id_ed25519
+          ssh -vv -p ${{secrets.SSH_PORT}} \
+            -i ~/.ssh/id_ed25519 \
+            -o IdentitiesOnly=yes
+            -o StrictHostKeyChecking=accpt-new \
+            ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}} \
+            "whoami" || true
+      
       - name: Deploy
         run: |
           rsync -avz --delete \
