@@ -1,1 +1,21 @@
 .idea
+bin
+publish
+.vs
+*.db
+*.db-shm
+*.db-wal
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Rider ignored files
+/modules.xml
+/contentModel.xml
+/projectSettingsUpdater.xml
+# Ignored default folder with query files
+/queries/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml

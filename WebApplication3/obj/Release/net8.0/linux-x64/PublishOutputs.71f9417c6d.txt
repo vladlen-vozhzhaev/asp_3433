@@ -1,0 +1,7 @@
+C:\Users\Asus\RiderProjects\WebApplication3\WebApplication3\bin\Release\net8.0\linux-x64\publish\WebApplication3
+C:\Users\Asus\RiderProjects\WebApplication3\WebApplication3\bin\Release\net8.0\linux-x64\publish\appsettings.Development.json
+C:\Users\Asus\RiderProjects\WebApplication3\WebApplication3\bin\Release\net8.0\linux-x64\publish\appsettings.json
+C:\Users\Asus\RiderProjects\WebApplication3\WebApplication3\bin\Release\net8.0\linux-x64\publish\WebApplication3.dll
+C:\Users\Asus\RiderProjects\WebApplication3\WebApplication3\bin\Release\net8.0\linux-x64\publish\WebApplication3.deps.json
+C:\Users\Asus\RiderProjects\WebApplication3\WebApplication3\bin\Release\net8.0\linux-x64\publish\WebApplication3.runtimeconfig.json
+C:\Users\Asus\RiderProjects\WebApplication3\WebApplication3\bin\Release\net8.0\linux-x64\publish\WebApplication3.pdb

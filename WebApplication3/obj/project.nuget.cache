@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "mjVEZe5AY9k=",
+  "dgSpecHash": "aEkG2DXU8k8=",
   "success": true,
   "projectFilePath": "C:\\Users\\Asus\\RiderProjects\\WebApplication3\\WebApplication3\\WebApplication3.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Asus\\.nuget\\packages\\microsoft.netcore.app.host.linux-x64\\8.0.7\\microsoft.netcore.app.host.linux-x64.8.0.7.nupkg.sha512"
+  ],
   "logs": []
 }
