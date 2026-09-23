@@ -3,33 +3,33 @@ name: Build & Deploy
 on:
   push:
     branches: [master]
-  workflow_dispatch: 
+  workflow_dispatch:
 
-jobs: 
+jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-  
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-          
+
       - name: Restore
         run: dotnet restore
-        
+
       - name: Publish
         run: dotnet publish -c Release -r linux-x64 --self-contained false -o ./publish
-        
+
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{secrets.SSH_KEY}}" > ~/.ssh/id_ed25519
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -p ${{secrets.SSH_PORT}} -H ${{secrets.SSH_HOST}} >> ~/.ssh/known_hosts 2>/dev/null
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
 
       - name: Deploy to server
         uses: appleboy/scp-action@v0.1.7
@@ -37,6 +37,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
           source: "publish/*"
           target: ${{ secrets.DEPLOY_PATH }}
           strip_components: 1
@@ -44,6 +45,6 @@ jobs:
 
       - name: Restart service
         run: |
-          ssh -p ${{secrets.SSH_PORT}} -i ~/.ssh/id_ed25519 \
-            ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}} \
+          ssh -p ${{ secrets.SSH_PORT }} -i ~/.ssh/id_ed25519 \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
             "sudo systemctl restart webapp"
