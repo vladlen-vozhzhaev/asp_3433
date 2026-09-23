@@ -30,25 +30,17 @@ jobs:
           echo "${{secrets.SSH_KEY}}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -p ${{secrets.SSH_PORT}} -H ${{secrets.SSH_HOST}} >> ~/.ssh/known_hosts 2>/dev/null
-        
-      - name: Debug SSH key
-        run: |
-          wc -c ~/.ssh/id_ed25519
-          head -n 1 ~/.ssh/id_ed25519
-          tail -n 1 ~/.ssh/id_ed25519
-          wc -l ~/.ssh/id_ed25519
-          ssh -vv -p ${{secrets.SSH_PORT}} \
-            -i ~/.ssh/id_ed25519 \
-            -o IdentitiesOnly=yes
-            -o StrictHostKeyChecking=accpt-new \
-            ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}} \
-            "whoami" || true
-      
-      - name: Deploy
-        run: |
-          rsync -avz --delete \
-            -e "ssh -p ${{secrets.SSH_PORT}} -i ~/.ssh/id_ed25519" \
-            ./publish/ ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}:/srv/webapp/
+
+      - name: Deploy to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "publish/*"
+          target: ${{ secrets.DEPLOY_PATH }}
+          strip_components: 1
+          overwrite: true
 
       - name: Restart service
         run: |
