@@ -11,10 +11,10 @@ jobs:
   
     steps:
       - name: Checkout
-        uses: actions/checkout
+        uses: actions/checkout@v4
       
       - name: Setup .NET
-        uses: actions/setup-dotnet
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
           
@@ -31,13 +31,13 @@ jobs:
           ssh-keyscan -p ${{secrets.SSH_PORT}} -H ${{secrets.SSH_HOST}} >> ~/.ssh/known_hosts 2>/dev/null
         
       - name: Deploy
-      run: |
-        rsync -avz --delete \
-          -e "ssh -p ${{secrets.SSH_PORT}} -i ~/.ssh/id_ed25519" \
-          ./publish/ ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}:/srv/webapp/
-      
-      - name: Restart sevice
         run: |
-          ssh -p -p ${{secrets.SSH_PORT}} -i ~/.ssh/id_ed25519 \
-          ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}} \
-          "sudo systemctl restart webapp"
+          rsync -avz --delete \
+            -e "ssh -p ${{secrets.SSH_PORT}} -i ~/.ssh/id_ed25519" \
+            ./publish/ ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}:/srv/webapp/
+
+      - name: Restart service
+        run: |
+          ssh -p ${{secrets.SSH_PORT}} -i ~/.ssh/id_ed25519 \
+            ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}} \
+            "sudo systemctl restart webapp"
