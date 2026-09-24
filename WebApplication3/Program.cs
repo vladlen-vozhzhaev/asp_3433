@@ -20,6 +20,9 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+
+//app.MapGet("/", () => "Hello World!");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

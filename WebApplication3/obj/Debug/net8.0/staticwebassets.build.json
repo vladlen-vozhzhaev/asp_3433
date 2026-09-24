@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "v2n5M/mRtuR+DMYe7BI+iv7hYFLTAm798Q8H6eGkeKM=",
+  "Hash": "WzHPrdD8KmSZpbgNkBstPdx1DvsOpbOkFqL6gPNhbgo=",
   "Source": "WebApplication3",
   "BasePath": "_content/WebApplication3",
   "Mode": "Default",
@@ -1193,6 +1193,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\lib\\jquery\\LICENSE.txt"
+    },
+    {
+      "Identity": "C:\\Users\\Asus\\RiderProjects\\WebApplication3\\WebApplication3\\wwwroot\\test.html",
+      "SourceId": "WebApplication3",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Asus\\RiderProjects\\WebApplication3\\WebApplication3\\wwwroot\\",
+      "BasePath": "_content/WebApplication3",
+      "RelativePath": "test.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\test.html"
     }
   ]
 }

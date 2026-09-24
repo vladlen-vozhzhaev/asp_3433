@@ -1,0 +1,28 @@
+@model WebApplication3.Models.Article
+@{
+    ViewData["Title"] = "Новая статья";
+}
+
+<h1 class="text-center">Новыая статья</h1>
+<div class="col-6 mx-auto">
+    <form asp-action="Create" method="post">
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label">Заголовок</label>
+            <input asp-for="Title" type="text" class="form-control" placeholder="Заголовок" >
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Author" class="form-label">Автор</label>
+            <input asp-for="Author" type="text" class="form-control" placeholder="Автор" >
+            <span asp-validation-for="Author" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Content" class="form-label">Текст статьи</label>
+            <textarea asp-for="Content" class="form-control" rows="6" ></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <input type="submit" class="form-control btn btn-primary" value="Опубликовать">
+        </div>
+    </form>
+</div>

@@ -1,0 +1,22 @@
+@model List<WebApplication3.Models.Article>
+
+@{
+    ViewData["Title"] = "Блог";
+}
+
+<h1 class="text-center">Все посты</h1>
+
+<a asp-action="Create">Добавить пост</a>
+
+@foreach (var article in Model)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">
+                <a asp-action="Article" asp-route-id="@article.Id">@article.Title</a>
+            </h5>
+            <h6 class="card-subtitle mb-2 text-muted">@article.Author - @article.CratedAt.ToString("dd.MM.yyyy")</h6>
+            <p class="card-text">@article.Content</p>
+        </div>
+    </div>
+}

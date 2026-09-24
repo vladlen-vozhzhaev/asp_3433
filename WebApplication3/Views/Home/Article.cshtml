@@ -1,0 +1,16 @@
+@model WebApplication3.Models.Article
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<h1>@Model.Title</h1>
+<p class="text-muted">Автор: @Model.Author | Опубликовано: @Model.CratedAt.ToString("dd.MM.yyyy")</p>
+
+<hr>
+
+<div>
+    @Model.Content
+</div>
+
+<a asp-action="Articles">Ко всем постам</a>
