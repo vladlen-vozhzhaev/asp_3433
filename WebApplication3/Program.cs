@@ -1,8 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using WebApplication3.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data Source=blog.db"));
+
+builder.Logging.AddConsole();
+builder.Logging.SetMinimumLevel(LogLevel.Information);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
