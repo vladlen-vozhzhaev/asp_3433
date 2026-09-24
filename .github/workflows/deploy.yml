@@ -25,32 +25,21 @@ jobs:
         run: dotnet publish -c Release -r linux-x64 --self-contained false -o ./publish
 
       - name: Setup SSH
-        shell: bash
         run: |
           mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-
-          printf '%s\n' "${{ secrets.SSH_KEY }}" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-
-          ssh-keygen -lf ~/.ssh/deploy_key
-
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -p "${{ secrets.SSH_PORT }}" -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
 
-      - name: Deploy with rsync
-        shell: bash
+      - name: Upload via rsync
         run: |
           rsync -avz --delete \
-            -e "ssh -p ${{ secrets.SSH_PORT }} -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new" \
+            -e "ssh -p ${{ secrets.SSH_PORT }} -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes" \
             ./publish/ \
-            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/"
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/
 
       - name: Restart service
-        shell: bash
         run: |
-          ssh -p "${{ secrets.SSH_PORT }}" \
-              -i ~/.ssh/deploy_key \
-              -o IdentitiesOnly=yes \
-              -o StrictHostKeyChecking=accept-new \
-              "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
-              "sudo systemctl restart webapp"
+          ssh -p "${{ secrets.SSH_PORT }}" -i ~/.ssh/id_ed25519 \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "sudo systemctl restart webapp && sudo systemctl --no-pager status webapp | head -n 20"
